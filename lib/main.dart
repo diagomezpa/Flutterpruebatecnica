@@ -1,6 +1,5 @@
 import 'package:cat_breeds/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'screens/home/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +16,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => SplashScreen(),
-        // Puedes agregar más rutas aquí
       },
     );
   }

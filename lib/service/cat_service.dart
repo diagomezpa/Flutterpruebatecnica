@@ -18,8 +18,6 @@ class CatService {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       List<Cat> cats = data.map((cat) => Cat.fromJson(cat)).toList();
-
-      // Realizar la segunda solicitud para obtener la URL de la imagen
       for (Cat cat in cats) {
         final imageUrl = await fetchCatImage(cat.referenceImageId ?? '');
         cat.imageurl = imageUrl;
@@ -63,7 +61,6 @@ class CatService {
       List<dynamic> data = json.decode(response.body);
       List<Cat> cats = data.map((cat) => Cat.fromJson(cat)).toList();
 
-      // Realizar la segunda solicitud para obtener la URL de la imagen
       for (Cat cat in cats) {
         final imageUrl = await fetchCatImage(cat.referenceImageId ?? '');
         cat.imageurl = imageUrl;

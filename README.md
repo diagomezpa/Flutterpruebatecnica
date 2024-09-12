@@ -1,17 +1,44 @@
-# cat_breeds
+# Cat Breeds
 
-A new Flutter project.
+Cat Breeds es una aplicación Flutter que proporciona información sobre diferentes razas de gatos. La aplicación está diseñada para ser intuitiva y fácil de usar, ofreciendo una experiencia agradable para los amantes de los gatos.
 
-## Getting Started
+## Características
 
-This project is a starting point for a Flutter application.
+- Lista de razas de gatos con imágenes.
+- Detalles de cada raza, incluyendo características y comportamientos.
+- Búsqueda de razas por nombre.
+- Pantalla de splash personalizada.
 
-A few resources to get you started if this is your first Flutter project:
+## Capturas de Pantalla
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![Pantalla de Inicio](assets/screenshots/home.png)
+![Detalles de la Raza](assets/screenshots/details.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# Flutterpruebatecnica
+## Instalación
+
+Sigue estos pasos para configurar y ejecutar el proyecto en tu máquina local.
+
+### Prerrequisitos
+
+- Flutter SDK: [Instrucciones de instalación](https://flutter.dev/docs/get-started/install)
+- Dart SDK: Incluido con Flutter
+- Android Studio o Visual Studio Code
+
+
+### Clonar el Repositorio
+
+```sh
+git clone https://github.com/tu-usuario/cat_breeds.git
+cd cat_breeds
+
+### Instalar Dependencias 
+flutter pub get
+
+### Ejecutar la Aplicación
+flutter run
+
+
+### Contacto
+- Autor: Diego Alejandro Gómez Parra
+- Email: Diagomezpa@gmail.com
+- GitHub: diagomezpa
