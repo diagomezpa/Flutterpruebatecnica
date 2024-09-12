@@ -38,7 +38,7 @@ flutter pub get
 flutter run
 
 
-### Contacto
+## Contacto
 - Autor: Diego Alejandro Gómez Parra
 - Email: Diagomezpa@gmail.com
 - GitHub: diagomezpa
