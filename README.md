@@ -10,9 +10,9 @@ Cat Breeds es una aplicación Flutter que proporciona información sobre diferen
 - Pantalla de splash personalizada.
 
 ## Capturas de Pantalla
-
-![Pantalla de Inicio](assets/screenshots/home.png)
-![Detalles de la Raza](assets/screenshots/details.png)
+![Splash](assets/splash.jpeg)
+![Pantalla de Inicio](assets/search.jpeg)
+![Detalles de la Raza](assets/detail.jpeg)
 
 ## Instalación
 
@@ -23,6 +23,7 @@ Sigue estos pasos para configurar y ejecutar el proyecto en tu máquina local.
 - Flutter SDK: [Instrucciones de instalación](https://flutter.dev/docs/get-started/install)
 - Dart SDK: Incluido con Flutter
 - Android Studio o Visual Studio Code
+
 
 
 ### Clonar el Repositorio
@@ -36,7 +37,7 @@ flutter pub get
 
 ### Ejecutar la Aplicación
 flutter run
-
+```
 
 ## Contacto
 - Autor: Diego Alejandro Gómez Parra
