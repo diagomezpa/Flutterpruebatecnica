@@ -11,23 +11,71 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final ScrollController _scrollController = ScrollController();
   late Future<List<Cat>> futureCats;
   List<Cat> allCats = [];
   List<Cat> filteredCats = [];
+  bool filtered = false;
+  bool _isLoading = false;
+  int _page = 0;
   TextEditingController searchController = TextEditingController();
+  String _previousQuery = '';
 
   @override
   void initState() {
     super.initState();
-    futureCats = CatService().fetchCats();
+    _fetchCats();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (filtered) {
+          filterCats(searchController.text);
+        } else {
+          _fetchCats();
+        }
+      }
+    });
   }
 
   void filterCats(String query) async {
-    Future<List<Cat>> filteredList = CatService().fetchCatName(query);
+    if (query == _previousQuery)
+      return; // No hacer nada si el query no ha cambiado
+    _previousQuery = query;
+    filtered = true;
+    CatService().fetchCatName(query).then((filteredCatsList) {
+      setState(() {
+        allCats = filteredCatsList;
+      });
+    });
+  }
+
+  Future<void> _fetchCats() async {
+    if (_isLoading) return;
 
     setState(() {
-      futureCats = filteredList;
+      _isLoading = true;
     });
+
+    try {
+      List<Cat> newCats = await CatService().fetchCats(page: _page, limit: 10);
+      setState(() {
+        _page++;
+        allCats.addAll(newCats);
+      });
+    } catch (e) {
+      // Manejo de errores
+      print('Error fetching cats: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -57,115 +105,111 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   ),
                 ),
-                onChanged: (query) {
-                  filterCats(query);
-                },
+                onSubmitted: filterCats,
               ),
             ),
             Expanded(
-              child: FutureBuilder(
-                future: futureCats,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No cats found'));
-                  } else {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: snapshot.data!.map((cat) {
-                          return Card(
-                            margin: EdgeInsets.all(8.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                child: allCats.isEmpty && _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        controller: _scrollController,
+                        itemCount: allCats.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == allCats.length) {
+                            return _isLoading
+                                ? Center(child: CircularProgressIndicator())
+                                : SizedBox.shrink();
+                          }
+                          Cat cat = allCats[index];
+                          return Column(
+                            children: [
+                              Card(
+                                margin: EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(cat.name),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CatDetail(cat: cat),
-                                            ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Más',
-                                          style: TextStyle(
-                                            color: Colors.blue,
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Image.network(cat.imageurl ??
-                                      'https://via.placeholder.com/150'),
-                                  SizedBox(height: 8.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'País de origen',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: 4.0),
-                                          Text(
-                                            cat.origin,
-                                            style: TextStyle(
-                                              fontSize: 16,
+                                          Text(cat.name),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CatDetail(cat: cat),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Más',
+                                              style: TextStyle(
+                                                color: Colors.blue,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      Column(
+                                      SizedBox(height: 8.0),
+                                      Image.network(cat.imageurl ??
+                                          'https://via.placeholder.com/150'),
+                                      SizedBox(height: 8.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'Inteligencia',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                'País de origen',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4.0),
+                                              Text(
+                                                cat.origin,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(height: 4.0),
-                                          Text(
-                                            cat.intelligence.toString(),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                'Inteligencia',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4.0),
+                                              Text(
+                                                cat.intelligence.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              )
+                            ],
                           );
-                        }).toList(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
+                        })),
           ],
         ),
       ),

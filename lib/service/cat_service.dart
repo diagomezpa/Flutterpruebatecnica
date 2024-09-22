@@ -7,9 +7,9 @@ class CatService {
   static const String apiKey =
       'live_99Qe4Ppj34NdplyLW67xCV7Ds0oSLKGgcWWYnSzMJY9C0QOu0HUR4azYxWkyW2nr';
 
-  Future<List<Cat>> fetchCats() async {
+  Future<List<Cat>> fetchCats({int page = 0, int limit = 10}) async {
     final response = await http.get(
-      Uri.parse('$apiUrl?limit=10'),
+      Uri.parse('$apiUrl?limit=$limit&page=$page'),
       headers: {
         'x-api-key': apiKey,
       },
